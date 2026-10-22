@@ -1,0 +1,55 @@
+# ==========================
+# EduPredict Cloud — .gitignore
+# ==========================
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.coveragerc
+
+# Model artifacts — commit the trained model so Render doesn't retrain every deploy
+# If you prefer to train at build time (render.yaml does this), add models/ here.
+# For this project we commit the artifact for faster deploys:
+# (Uncomment the next line to exclude model artifacts from git)
+# models/
+
+# Data
+# data/*.csv is committed (synthetic, not sensitive)
+
+# Plots (generated locally — regenerate with evaluate_model.py)
+reports/*.png
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs
+*.log
+logs/
+
+# OS
+desktop.ini

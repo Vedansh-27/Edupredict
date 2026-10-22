@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduPredict Cloud — Student Performance Prediction</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">📊</div>
+        <div>
+          <div class="brand-name">EduPredict Cloud</div>
+          <div class="brand-tagline">Student Performance Prediction System</div>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="#predict" class="nav-link">Predict</a>
+        <a href="#model-info" class="nav-link">Model Info</a>
+        <a href="/docs" class="nav-link" target="_blank" rel="noopener">API Docs</a>
+        <span class="health-indicator" id="healthIndicator" title="System status">
+          <span class="health-dot" id="healthDot"></span>
+          <span id="healthText">Checking…</span>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">Estimate Student Final Grade</h1>
+      <p class="hero-subtitle">
+        EduPredict Cloud uses a machine learning model trained on historical academic
+        data to estimate a student's final examination score on a 0–20 scale.
+        Enter academic details below to generate a prediction.
+      </p>
+      <div class="disclaimer-banner">
+        <span class="disclaimer-icon" aria-hidden="true">⚠️</span>
+        <span>
+          <strong>Educational tool only.</strong> Predictions are statistical estimates
+          and must not be used to make consequential decisions about individual students.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="container main-grid" id="predict">
+
+    <!-- ===== PREDICTION FORM ===== -->
+    <section class="card form-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-icon" aria-hidden="true">🎓</span>
+          Student Information
+        </h2>
+        <p class="card-subtitle">Fill in all fields to generate a grade prediction.</p>
+      </div>
+
+      <form id="predictionForm" novalidate>
+
+        <!-- Academic Grades -->
+        <fieldset class="form-section">
+          <legend class="section-label">Academic Grades</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="G1">First Period Grade (G1) <span class="required">*</span></label>
+              <div class="input-hint">0 – 20 scale</div>
+              <input type="number" id="G1" name="G1" min="0" max="20" step="0.5"
+                     placeholder="e.g. 12" required aria-describedby="G1-error" />
+              <span class="field-error" id="G1-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="G2">Second Period Grade (G2) <span class="required">*</span></label>
+              <div class="input-hint">0 – 20 scale</div>
+              <input type="number" id="G2" name="G2" min="0" max="20" step="0.5"
+                     placeholder="e.g. 13" required aria-describedby="G2-error" />
+              <span class="field-error" id="G2-error" role="alert"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Study Behaviour -->
+        <fieldset class="form-section">
+          <legend class="section-label">Study Behaviour</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studytime">Weekly Study Time <span class="required">*</span></label>
+              <select id="studytime" name="studytime" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Less than 2 hours</option>
+                <option value="2">2 — 2 to 5 hours</option>
+                <option value="3">3 — 5 to 10 hours</option>
+                <option value="4">4 — More than 10 hours</option>
+              </select>
+              <span class="field-error" id="studytime-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="failures">Past Class Failures <span class="required">*</span></label>
+              <select id="failures" name="failures" required>
+                <option value="">— Select —</option>
+                <option value="0">0 — None</option>
+                <option value="1">1 — One failure</option>
+                <option value="2">2 — Two failures</option>
+                <option value="3">3 — Three or more</option>
+              </select>
+              <span class="field-error" id="failures-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="absences">Number of Absences <span class="required">*</span></label>
+              <div class="input-hint">0 – 74</div>
+              <input type="number" id="absences" name="absences" min="0" max="74"
+                     placeholder="e.g. 4" required />
+              <span class="field-error" id="absences-error" role="alert"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Demographics -->
+        <fieldset class="form-section">
+          <legend class="section-label">Demographics</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sex">Sex <span class="required">*</span></label>
+              <select id="sex" name="sex" required>
+                <option value="">— Select —</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+              <span class="field-error" id="sex-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="age">Age <span class="required">*</span></label>
+              <div class="input-hint">15 – 22</div>
+              <input type="number" id="age" name="age" min="15" max="22"
+                     placeholder="e.g. 17" required />
+              <span class="field-error" id="age-error" role="alert"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Family Background -->
+        <fieldset class="form-section">
+          <legend class="section-label">Family Background</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Medu">Mother's Education <span class="required">*</span></label>
+              <select id="Medu" name="Medu" required>
+                <option value="">— Select —</option>
+                <option value="0">0 — None</option>
+                <option value="1">1 — Primary (up to 4th grade)</option>
+                <option value="2">2 — 5th to 9th grade</option>
+                <option value="3">3 — Secondary education</option>
+                <option value="4">4 — Higher education</option>
+              </select>
+              <span class="field-error" id="Medu-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="Fedu">Father's Education <span class="required">*</span></label>
+              <select id="Fedu" name="Fedu" required>
+                <option value="">— Select —</option>
+                <option value="0">0 — None</option>
+                <option value="1">1 — Primary (up to 4th grade)</option>
+                <option value="2">2 — 5th to 9th grade</option>
+                <option value="3">3 — Secondary education</option>
+                <option value="4">4 — Higher education</option>
+              </select>
+              <span class="field-error" id="Fedu-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="famrel">Family Relationship Quality <span class="required">*</span></label>
+              <select id="famrel" name="famrel" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very bad</option>
+                <option value="2">2 — Bad</option>
+                <option value="3">3 — Neutral</option>
+                <option value="4">4 — Good</option>
+                <option value="5">5 — Excellent</option>
+              </select>
+              <span class="field-error" id="famrel-error" role="alert"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Lifestyle -->
+        <fieldset class="form-section">
+          <legend class="section-label">Lifestyle &amp; Health</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="freetime">Free Time After School <span class="required">*</span></label>
+              <select id="freetime" name="freetime" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very low</option>
+                <option value="2">2 — Low</option>
+                <option value="3">3 — Moderate</option>
+                <option value="4">4 — High</option>
+                <option value="5">5 — Very high</option>
+              </select>
+              <span class="field-error" id="freetime-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="goout">Going Out with Friends <span class="required">*</span></label>
+              <select id="goout" name="goout" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very low</option>
+                <option value="2">2 — Low</option>
+                <option value="3">3 — Moderate</option>
+                <option value="4">4 — High</option>
+                <option value="5">5 — Very high</option>
+              </select>
+              <span class="field-error" id="goout-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="health">Health Status <span class="required">*</span></label>
+              <select id="health" name="health" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very bad</option>
+                <option value="2">2 — Bad</option>
+                <option value="3">3 — Fair</option>
+                <option value="4">4 — Good</option>
+                <option value="5">5 — Very good</option>
+              </select>
+              <span class="field-error" id="health-error" role="alert"></span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Dalc">Weekday Alcohol Consumption <span class="required">*</span></label>
+              <select id="Dalc" name="Dalc" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very low</option>
+                <option value="2">2 — Low</option>
+                <option value="3">3 — Moderate</option>
+                <option value="4">4 — High</option>
+                <option value="5">5 — Very high</option>
+              </select>
+              <span class="field-error" id="Dalc-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="Walc">Weekend Alcohol Consumption <span class="required">*</span></label>
+              <select id="Walc" name="Walc" required>
+                <option value="">— Select —</option>
+                <option value="1">1 — Very low</option>
+                <option value="2">2 — Low</option>
+                <option value="3">3 — Moderate</option>
+                <option value="4">4 — High</option>
+                <option value="5">5 — Very high</option>
+              </select>
+              <span class="field-error" id="Walc-error" role="alert"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" id="resetBtn" class="btn btn-secondary">Reset Form</button>
+          <button type="submit" id="predictBtn" class="btn btn-primary">
+            <span id="btnText">Predict Final Grade</span>
+            <span id="btnSpinner" class="spinner" hidden aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <!-- Global form error -->
+        <div id="formError" class="alert alert-error" hidden role="alert"></div>
+
+      </form>
+    </section>
+
+    <!-- ===== RESULT PANEL ===== -->
+    <aside class="result-panel">
+
+      <!-- Placeholder state -->
+      <div class="card result-placeholder" id="resultPlaceholder">
+        <div class="placeholder-icon" aria-hidden="true">🎯</div>
+        <p class="placeholder-text">Fill in the form and click <strong>Predict Final Grade</strong> to see the estimated score.</p>
+      </div>
+
+      <!-- Result card (shown after prediction) -->
+      <div class="card result-card" id="resultCard" hidden>
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="card-icon" aria-hidden="true">📈</span>
+            Prediction Result
+          </h2>
+        </div>
+
+        <div class="score-display">
+          <div class="score-value" id="scoreValue">—</div>
+          <div class="score-scale">out of 20</div>
+        </div>
+
+        <div class="score-bar-container" aria-label="Score bar">
+          <div class="score-bar">
+            <div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div>
+          </div>
+          <div class="score-bar-labels">
+            <span>0</span>
+            <span>5</span>
+            <span>10</span>
+            <span>15</span>
+            <span>20</span>
+          </div>
+        </div>
+
+        <div class="result-badge" id="resultBadge"></div>
+
+        <div class="result-interpretation" id="resultInterpretation"></div>
+
+        <div class="result-meta">
+          <div class="meta-item">
+            <span class="meta-label">Model Version</span>
+            <span class="meta-value" id="modelVersion">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Scale</span>
+            <span class="meta-value" id="scoreScale">0–20</span>
+          </div>
+        </div>
+
+        <div class="result-disclaimer">
+          ⚠️ This is a statistical estimate. Actual academic performance depends on
+          many factors not captured by this model.
+        </div>
+      </div>
+
+      <!-- Model Info Card -->
+      <div class="card model-info-card" id="modelInfoCard" aria-labelledby="modelInfoTitle">
+        <div class="card-header">
+          <h2 class="card-title" id="modelInfoTitle">
+            <span class="card-icon" aria-hidden="true">🤖</span>
+            Model Information
+          </h2>
+        </div>
+        <div id="modelInfoContent">
+          <div class="loading-text">Loading model information…</div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">EduPredict Cloud</div>
+      <div class="footer-meta">
+        Cloud Computing FT-III Case Study &mdash; Academic demonstration only.
+        Predictions are not a substitute for professional academic counselling.
+      </div>
+      <div class="footer-links">
+        <a href="/docs" target="_blank" rel="noopener">API Documentation</a>
+        <a href="/health" target="_blank" rel="noopener">Health Check</a>
+        <a href="/model-info" target="_blank" rel="noopener">Model Info JSON</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

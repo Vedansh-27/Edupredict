@@ -1,0 +1,28 @@
+# Render deployment configuration for EduPredict Cloud
+# Documentation: https://render.com/docs/render-yaml-spec
+
+services:
+  - type: web
+    name: edupredict-cloud
+    runtime: python
+    plan: free
+
+    # Build phase: install dependencies and generate the trained model artifact
+    buildCommand: |
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python ml/generate_synthetic_data.py &&
+      python ml/train_model.py
+
+    # Start phase: launch the FastAPI app on the port assigned by Render
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    # Health check configuration
+    healthCheckPath: /health
+
+    # Environment variables (no secrets needed for this stateless app)
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: PORT
+        value: 10000       # Render's default; overridden automatically at runtime
