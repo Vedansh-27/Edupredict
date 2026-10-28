@@ -23,6 +23,6 @@ services:
     # Environment variables (no secrets needed for this stateless app)
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.0
+        value: 3.11.9
       - key: PORT
         value: 10000       # Render's default; overridden automatically at runtime
